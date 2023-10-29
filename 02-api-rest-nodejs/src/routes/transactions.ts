@@ -26,7 +26,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .select()
 
       return { transactions }
-    },
+    }
   )
 
   app.get(
@@ -51,7 +51,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .first()
 
       return { transaction }
-    },
+    }
   )
 
   app.get(
@@ -67,7 +67,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .first()
 
       return { summary }
-    },
+    }
   )
 
   app.post('/', async (request, reply) => {

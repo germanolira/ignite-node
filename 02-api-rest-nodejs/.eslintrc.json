@@ -1,5 +1,7 @@
 {
   "extends": [
-    "@rocketseat/eslint-config/node"
+    "@rocketseat/eslint-config/react"
+    // "@rocketseat/eslint-config/node"
+    // For some reason this is not working for node
   ]
 }
