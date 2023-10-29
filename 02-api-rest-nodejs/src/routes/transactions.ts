@@ -26,7 +26,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .select()
 
       return { transactions }
-    }
+    },
   )
 
   app.get(
@@ -51,7 +51,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .first()
 
       return { transaction }
-    }
+    },
   )
 
   app.get(
@@ -67,7 +67,7 @@ export async function transactionRoutes(app: FastifyInstance) {
         .first()
 
       return { summary }
-    }
+    },
   )
 
   app.post('/', async (request, reply) => {
@@ -78,7 +78,7 @@ export async function transactionRoutes(app: FastifyInstance) {
     })
 
     const { title, amount, type } = createTransactionBodySchema.parse(
-      request.body
+      request.body,
     )
 
     let sessionId = request.cookies.sessionId
@@ -101,4 +101,29 @@ export async function transactionRoutes(app: FastifyInstance) {
 
     return reply.status(201).send()
   })
+
+  app.delete(
+    '/:id',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const deleteTransactionParamsSchema = z.object({
+        id: z.string().uuid(),
+      })
+
+      const { id } = deleteTransactionParamsSchema.parse(request.params)
+
+      const { sessionId } = request.cookies
+
+      await knex('transactions')
+        .where({
+          session_id: sessionId,
+          id,
+        })
+        .delete()
+
+      return reply.status(204).send()
+    },
+  )
 }

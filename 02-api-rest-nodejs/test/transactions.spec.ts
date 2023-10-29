@@ -1,18 +1,26 @@
-import { it, beforeAll, afterAll, describe, expect } from 'vitest'
+import { it, beforeAll, afterAll, describe, beforeEach } from 'vitest'
+import { execSync } from 'node:child_process'
 import request from 'supertest'
 import { app } from '../src/app'
 
 describe('Transactions routes', () => {
   beforeAll(async () => {
     await app.ready()
+
+    console.log('app.server', app.server)
   })
 
   afterAll(async () => {
     await app.close()
   })
 
+  beforeEach(() => {
+    execSync('npm run knex migrate:rollback --all')
+    execSync('npm run knex migrate:latest')
+  })
+
   it('should be able to create a new transaction', async () => {
-    await request(app.server)
+    const response = await request(app.server)
       .post('/transactions')
       .send({
         title: 'New transaction',
@@ -20,6 +28,8 @@ describe('Transactions routes', () => {
         type: 'credit',
       })
       .expect(201)
+
+    console.log('response.headers', response.headers)
   })
 
   // it('should be able to list all transactions', async () => {
@@ -31,7 +41,11 @@ describe('Transactions routes', () => {
   //       type: 'credit',
   //     })
 
+  //   console.log('createTransactionResponse', createTransactionResponse.body)
+
   //   const cookies = createTransactionResponse.get('Set-Cookie')
+
+  //   console.log('cookies', cookies)
 
   //   const listTransactionsResponse = await request(app.server)
   //     .get('/transactions')
@@ -45,5 +59,6 @@ describe('Transactions routes', () => {
   //     }),
   //   ])
   // })
+
   // Should pass the test above, but it doesn't. Why?
 })
